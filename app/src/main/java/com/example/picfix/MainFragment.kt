@@ -17,6 +17,7 @@ class MainFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: MainFragmentBinding
+    private lateinit var adapter: NotesListAdapter
 
 
     override fun onCreateView(
@@ -37,6 +38,9 @@ class MainFragment : Fragment() {
 
         viewModel.notesList.observe(viewLifecycleOwner, Observer {
             Log.i("noteLogging", it.toString())
+            adapter = NotesListAdapter(it)
+            binding.recyclerView.adapter = adapter
+            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         })
 
         return binding.root
