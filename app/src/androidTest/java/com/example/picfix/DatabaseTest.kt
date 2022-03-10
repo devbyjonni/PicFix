@@ -44,6 +44,7 @@ class DatabaseTest {
         dao.insertNote(note)
         val savedNote = dao.getNoteById(1)
         assertEquals(savedNote?.id ?: 0, 1)
+
     }
 
     @After
