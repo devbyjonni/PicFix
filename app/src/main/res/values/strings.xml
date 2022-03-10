@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PicFix</string>
+    <string name="enter_note">Enter note</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.picfix
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,14 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.picfix.data.NoteEntity
 import com.example.picfix.databinding.ListItemBinding
 
-class NotesListAdapter(private val notesList: List<NoteEntity>) :
+class NotesListAdapter(private val notesList: List<NoteEntity>,
+                       private val listener: ListItemListener) :
     RecyclerView.Adapter<NotesListAdapter.ViewHolder>() {
-
-    val selectedNotes = arrayListOf<NoteEntity>()
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val binding = ListItemBinding.bind(itemView)
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,6 +28,13 @@ class NotesListAdapter(private val notesList: List<NoteEntity>) :
         val note = notesList[position]
         with(holder.binding) {
             noteText.text = note.text
+            root.setOnClickListener{
+                listener.onItemClick(note.id)
+            }
         }
+    }
+
+    interface ListItemListener {
+        fun onItemClick(noteId: Int)
     }
 }
