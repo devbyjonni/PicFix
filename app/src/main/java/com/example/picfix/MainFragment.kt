@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.picfix.data.NoteEntity
 import com.example.picfix.databinding.MainFragmentBinding
 
 class MainFragment : Fragment(),
@@ -29,6 +30,8 @@ class MainFragment : Fragment(),
             .supportActionBar?.setDisplayHomeAsUpEnabled(false)
         setHasOptionsMenu(true) // show menu in fragment.
 
+        requireActivity().title = getString(R.string.app_name)
+
         binding = MainFragmentBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
@@ -45,9 +48,20 @@ class MainFragment : Fragment(),
             adapter = NotesListAdapter(it, this@MainFragment)
             binding.recyclerView.adapter = adapter
             binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+
+            val selectedNotes =
+                savedInstanceState?.getParcelableArrayList<NoteEntity>(SELECTED_NOTES_KEY)
+            adapter.selectedNotes.addAll(selectedNotes ?: emptyList())
         }
+
+        binding.floatingActionButton.setOnClickListener{
+            editNote(NEW_NOTE_ID)
+        }
+
         return binding.root
     }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         val menuId =
@@ -92,7 +106,7 @@ class MainFragment : Fragment(),
         return true
     }
 
-    override fun onItemClick(noteId: Int) {
+    override fun editNote(noteId: Int) {
         Log.i(TAG, "onItemClick: received note id $noteId")
         val action = MainFragmentDirections.actionEditNote(noteId)
         findNavController().navigate(action)
@@ -100,5 +114,15 @@ class MainFragment : Fragment(),
 
     override fun onItemSelectionChanged() {
         requireActivity().invalidateOptionsMenu()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        if (this::adapter.isInitialized) {
+            outState.putParcelableArrayList(
+                SELECTED_NOTES_KEY,
+                adapter.selectedNotes
+            )
+        }
+        super.onSaveInstanceState(outState)
     }
 }
